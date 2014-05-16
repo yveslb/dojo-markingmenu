@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Marking Menus in Dojo</title>
+
+    <script>
+	dojoConfig= {
+        has: {
+            "dojo-firebug": true,
+            "dojo-debug-messages": true
+        },
+        parseOnLoad: true,
+        async: true,
+        isDebug: true,
+        canvasEvents: false,
+        forceGfxRenderer: "canvas",
+        dojoBlankHtmlUrl: "local/blank.html",
+        packages: [ {
+            name: 'markingMenu',
+            location: location.pathname.replace(/\/[^/]+$/, '') + '/markingMenu'
+        } ]
+	};
+	</script>
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojo/dojo.js"></script>
+
+    <script>
+	require([
+	"dojo/dom",
+	"dojo/dom-geometry",
+	"dojo/on",
+	"dojox/gfx",
+	"markingMenu/MarkingMenu",
+	"dojo/domReady!"
+	], function(dom, domGeom, on, gfx, MarkingMenu) {
+
+	console.log("marking menu demo");
+
+//------------------------- TOOLS
+	var blackPen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("black"); };
+	var bluePen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("blue"); };
+	var redPen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("red"); };
+	var greenPen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("green"); };
+	var grayPen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("gray"); };
+	var yellowPen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("yellow"); };
+	var purplePen = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:2 }).setFill("purple"); };
+
+	var eraser = function(evt){ group.createCircle({ cx: evt.pageX-position.x, cy: evt.pageY-position.y, r:10 }).setFill("white"); };
+	var eraseAll = function(evt){ group.clear(); };
+
+    // default tool
+	var currentTool = blackPen;
+
+//------------------------- MARKING MENUS
+    // create a 8-portion marking menu
+	var startingMarkingMenu = new MarkingMenu(8);
+	// create items to change color
+	startingMarkingMenu.addItemToPortion(2, "Blue Pen", function(){ currentTool = bluePen; });
+	startingMarkingMenu.addItemToPortion(3, "Purple Pen", function(){ currentTool = purplePen; });
+	startingMarkingMenu.addItemToPortion(4, "Red Pen", function(){ currentTool = redPen; });
+	startingMarkingMenu.addItemToPortion(5, "Black Pen", function(){ currentTool = blackPen; });
+	startingMarkingMenu.addItemToPortion(6, "Gray Pen", function(){ currentTool = grayPen; });
+	startingMarkingMenu.addItemToPortion(7, "Yellow Pen", function(){ currentTool = yellowPen; });
+	startingMarkingMenu.addItemToPortion(8, "Green Pen", function(){ currentTool = greenPen; });
+
+    // connect the main marking menu to node id "mmcanvas"
+	startingMarkingMenu.connectToNodeId("mmcanvas");
+
+
+    // create a sub marking menu
+	var eraseMarkingMenu = new MarkingMenu(4);
+	eraseMarkingMenu.addItemToPortion(1, "Eraser", function(){ currentTool = eraser; });
+	eraseMarkingMenu.addItemToPortion(2, "Erase All", function(){
+	    eraseAll();
+	    if(moveHandler) moveHandler.remove();
+	    if(upHandler) upHandler.remove();
+	});
+
+	// connect the sub marking menu to startingMarkingMenu at portion number 1
+	startingMarkingMenu.addItemToPortion(1, "erase tools", eraseMarkingMenu);
+
+//------------------------- DRAWING SURFACE
+	var surface = gfx.createSurface("mmcanvas", 600, 400);
+	var group = surface.createGroup();
+	var position = domGeom.position(dom.byId("mmcanvas"));
+
+//------------------------- DRAWING EVENTS
+	var moveHandler = null;
+	var upHandler = null;
+
+	var up = function(evt){
+	    moveHandler.remove();
+	    upHandler.remove();
+	};
+	var move = function(evt){
+	    currentTool(evt);
+	};
+	var down = function(evt){
+		if (evt.button == dojo.mouseButtons.LEFT){
+			moveHandler = on(dom.byId("mmcanvas"),"mousemove",move);
+			upHandler = on(dom.byId("mmcanvas"),"mouseup",up);
+		}
+	};
+	var currentToolHandler = on(dom.byId("mmcanvas"),"mousedown",down);
+
+//------------------------- INSTRUCTIONS
+	dom.byId("info1").innerHTML = "Left click to use the current tool";
+	});
+	</script>
+</head>
+<body>
+    <h3 id="info1"> Loading...</h3>
+    <h3 id="info2"> Right click to activate the Marking Menu</h3>
+    <div id="mmcanvas" style="border:1px solid; width:600px; height:400px;"></div>
+</body>
+</html>

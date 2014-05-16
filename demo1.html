@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Marking Menus in Dojo</title>
+
+    <script>
+	dojoConfig= {
+        has: {
+            "dojo-firebug": true,
+            "dojo-debug-messages": true
+        },
+        parseOnLoad: true,
+        async: true,
+        isDebug: true,
+        dojoBlankHtmlUrl: "local/blank.html",
+        packages: [ {
+            name: 'markingMenu',
+            location: location.pathname.replace(/\/[^/]+$/, '') + '/markingMenu'
+        } ]
+	};
+	</script>
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojo/dojo.js"></script>
+
+    <script>
+	require([
+	"dojo/dom", "dojo/_base/window", "markingMenu/MarkingMenu", "dojo/domReady!"
+	], function(dom, win, MarkingMenu) {
+
+	console.log("marking menu demo");
+
+    var text = dom.byId("info1");
+
+//------------------------- MARKING MENUS
+
+	var markingMenu1 = new MarkingMenu(4);
+	markingMenu1.addItemToPortion(2, "1-2", function(){ text.innerHTML = "test 1-2 selected"; });
+	markingMenu1.addItemToPortion(3, "1-3", function(){ text.innerHTML = "test 1-3 selected"; });
+	markingMenu1.addItemToPortion(4, "1-4", function(){ text.innerHTML = "test 1-4 selected"; });
+
+    // connect the main marking menu
+	markingMenu1.connectToNodeId(win.doc);
+
+    // create a sub marking menu
+	var markingMenu2 = new MarkingMenu(4);
+	markingMenu2.addItemToPortion(1, "2-1", function(){ text.innerHTML = "test 2-1 selected"; });
+	markingMenu2.addItemToPortion(2, "2-2", function(){ text.innerHTML = "test 2-2 selected"; });
+	markingMenu2.addItemToPortion(3, "2-3", function(){ text.innerHTML = "test 2-3 selected"; });
+	markingMenu2.addItemToPortion(4, "2-4", function(){ text.innerHTML = "test 2-4 selected"; });
+
+	// connect to first marking menu
+	markingMenu1.addItemToPortion(1, "sub menu", markingMenu2);
+
+//-------------------------
+
+	text.innerHTML = "Loaded";
+
+	});
+	</script>
+</head>
+<body>
+    <h3 id="info1"> Loading... </h3>
+    <h3 id="info2"> Right click to activate the Marking Menu</h3>
+</body>
+</html>
