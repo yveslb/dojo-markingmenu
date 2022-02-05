@@ -1,4 +1,4 @@
-#DOJO Marking Menu
+# DOJO Marking Menu
 
 Marking Menu implementation in DOJO.
 
@@ -12,15 +12,15 @@ A Marking Menu can be used like a pie menu.
 
 You can also select items with gestures, by moving the mouse before the menu become visible.
 
-##Radial or Pie Menu
+## Radial or Pie Menu
 
 ![menus](/images/mmenus-trace.png)
 
-##Gesture
+## Gesture
 
 ![gesture](/images/gesture.png)
 
-##Create Marking Menus
+## Create Marking Menus
 
     require(["markingMenu/MarkingMenu"], function(MarkingMenu) {
 
@@ -46,6 +46,6 @@ You can also select items with gestures, by moving the mouse before the menu bec
 
 See also [demo1.html](/demo1.html) and [demo2.html](/demo2.html)
 
-##More Information
+## More Information
 
 The method used for the gesture recognition is explained in [METHOD.md](/METHOD.md).
